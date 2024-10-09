@@ -27,7 +27,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation and return an Ok result of inner
 // type Color. You need to create an implementation for a tuple of three
@@ -41,6 +40,17 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+
+        let red = r.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let green = g.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let blue = b.try_into().map_err(|_| IntoColorError::IntConversion)?;
+
+        if (0..=255i16).contains(&r) && (0..=255i16).contains(&g) && (0..=255i16).contains(&b) {
+            Ok(Color {red: red, green: green, blue: blue})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -48,6 +58,16 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+        let red = r.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let green = g.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let blue = b.try_into().map_err(|_| IntoColorError::IntConversion)?;
+
+        if (0..=255i16).contains(&r) && (0..=255i16).contains(&g) && (0..=255i16).contains(&b) {
+            Ok(Color {red: red, green: green, blue: blue})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -55,6 +75,24 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        let r = slice[0];
+        let g = slice[1];
+        let b = slice[2];
+
+
+        let red: u8 = r.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let green: u8 = g.try_into().map_err(|_| IntoColorError::IntConversion)?;
+        let blue: u8 = b.try_into().map_err(|_| IntoColorError::IntConversion)?;
+
+        if (0..=255).contains(&red) && (0..=255).contains(&green) && (0..=255).contains(&blue) {
+            Ok(Color { red, green, blue })
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
