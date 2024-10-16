@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -70,14 +69,51 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+	
+        where 
+        T: std::cmp::Ord + Clone,
+    {
+        let mut result = LinkedList::new();
+        let mut current_a = list_a.start;
+        let mut current_b = list_b.start;
+
+        while current_a.is_some() || current_b.is_some() {
+            match (current_a, current_b) {
+                (Some(node_a), Some(node_b)) => {
+                    unsafe {
+                        let val_a = (*node_a.as_ptr()).val.clone();
+                        let val_b = (*node_b.as_ptr()).val.clone();
+                        
+                        if val_a <= val_b {
+                            result.add(val_a);
+                            current_a = (*node_a.as_ptr()).next; // Move to the next node in list_a
+                        } else {
+                            result.add(val_b);
+                            current_b = (*node_b.as_ptr()).next; // Move to the next node in list_b
+                        }
+                    }
+                },
+                (Some(node_a), None) => {
+                    unsafe {
+                        let val_a = (*node_a.as_ptr()).val.clone();
+                        result.add(val_a);
+                        current_a = (*node_a.as_ptr()).next; // Move to the next node in list_a
+                    }
+                },
+                (None, Some(node_b)) => {
+                    unsafe {
+                        let val_b = (*node_b.as_ptr()).val.clone();
+                        result.add(val_b);
+                        current_b = (*node_b.as_ptr()).next; // Move to the next node in list_b
+                    }
+                },
+                (None, None) => break, // Both are None
+            }
         }
-	}
+        
+        result
+    }
+        
 }
 
 impl<T> Display for LinkedList<T>
