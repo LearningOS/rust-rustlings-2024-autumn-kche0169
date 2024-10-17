@@ -2,8 +2,6 @@
 	bfs
 	This problem requires you to implement a basic BFS algorithm
 */
-
-//I AM NOT DONE
 use std::collections::VecDeque;
 
 // Define a graph
@@ -31,6 +29,19 @@ impl Graph {
 		//TODO
 
         let mut visit_order = vec![];
+        let mut visited: Vec<bool> = vec![false; self.adj.len()];
+        let mut q: VecDeque<usize> = VecDeque::new();
+        visited[start] = true;
+        q.push_back(start);
+        while let Some(src) = q.pop_front() {
+            for &item in &self.adj[src] {
+                if visited[item] != true {
+                    q.push_back(item);
+                    visited[item] = true;
+                }
+            }
+            visit_order.push(src);
+        }
         visit_order
     }
 }
